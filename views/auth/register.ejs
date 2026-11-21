@@ -1,0 +1,112 @@
+
+<%- include("../partials/header", { pageTitle: "Create Account" }) %>
+
+<section class="auth-section">
+    <div class="auth-card">
+
+        <h1>Create your account</h1>
+
+        <p>
+            Join RentLoop and start renting or sharing items.
+        </p>
+
+        <% if (error) { %>
+            <div class="alert">
+                <%= error %>
+            </div>
+        <% } %>
+
+        <form action="/register" method="POST">
+
+            <label for="name">
+                Full Name
+            </label>
+
+            <input
+                type="text"
+                id="name"
+                name="name"
+                maxlength="100"
+                value="<%= formData?.name || '' %>"
+                placeholder="Enter your full name"
+                required
+            >
+
+            <label for="email">
+                Email Address
+            </label>
+
+            <input
+                type="email"
+                id="email"
+                name="email"
+                value="<%= formData?.email || '' %>"
+                placeholder="Enter your email"
+                required
+            >
+
+            <label for="phone">
+                Phone Number
+            </label>
+
+            <input
+                type="tel"
+                id="phone"
+                name="phone"
+                maxlength="30"
+                value="<%= formData?.phone || '' %>"
+                placeholder="Enter your phone number"
+            >
+
+            <label for="role">
+                Account Type
+            </label>
+
+            <select id="role" name="role" required>
+                <option
+                    value="CUSTOMER"
+                    <%= formData?.role === "CUSTOMER" || !formData?.role ? "selected" : "" %>
+                >
+                    Customer - Rent Items
+                </option>
+
+                <option
+                    value="OWNER"
+                    <%= formData?.role === "OWNER" ? "selected" : "" %>
+                >
+                    Owner - List Items for Rent
+                </option>
+            </select>
+
+            <label for="password">
+                Password
+            </label>
+
+            <input
+                type="password"
+                id="password"
+                name="password"
+                minlength="8"
+                maxlength="72"
+                placeholder="Minimum 8 characters"
+                required
+            >
+
+            <button
+                type="submit"
+                class="btn btn-primary full-width"
+            >
+                Create Account
+            </button>
+
+        </form>
+
+        <p class="auth-switch">
+            Already registered?
+            <a href="/login">Login</a>
+        </p>
+
+    </div>
+</section>
+
+<%- include("../partials/footer") %>

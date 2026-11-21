@@ -1,0 +1,62 @@
+<%- include("../partials/header", { pageTitle: "My Listings" }) %>
+
+<section class="dashboard-header">
+    <h1>My Listings</h1>
+    <p>Manage the items you have published on RentLoop.</p>
+    <a href="/items/add" class="btn btn-primary">Add New Item</a>
+</section>
+
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Daily Price</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <% if (items.length === 0) { %>
+                <tr>
+                    <td colspan="5">You have not listed any items yet.</td>
+                </tr>
+            <% } %>
+
+            <% items.forEach(item => { %>
+                <tr>
+                    <td>
+                        <div class="table-item">
+                            <% if (item.image) { %>
+                                <img src="/uploads/<%= item.image %>" alt="">
+                            <% } %>
+                            <%= item.title %>
+                        </div>
+                    </td>
+
+                    <td>Rs. <%= Number(item.price_per_day).toLocaleString() %></td>
+                    <td><%= item.location %></td>
+                    <td><span class="status"><%= item.status %></span></td>
+
+                    <td class="actions">
+                        <a href="/items/<%= item.id %>">View</a>
+                        <a href="/items/<%= item.id %>/edit">Edit</a>
+
+                        <form
+                            action="/items/<%= item.id %>/delete"
+                            method="POST"
+                            class="inline-form"
+                            onsubmit="return confirm('Delete this listing?')"
+                        >
+                            <button class="text-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
+
+<%- include("../partials/footer") %>

@@ -1,0 +1,137 @@
+
+<%- include("../partials/header", { pageTitle: "Explore Rentals" }) %>
+
+<section class="hero">
+    <div class="hero-content">
+        <span class="eyebrow">THE SMARTER WAY TO RENT</span>
+
+        <h1>
+            Find what you need.<br>
+            <span>Rent it with ease.</span>
+        </h1>
+
+        <p>
+            Discover useful items available for rent in your area.
+        </p>
+
+        <form action="/search" method="GET" class="search-form">
+            <input
+                type="search"
+                name="search"
+                placeholder="Search cameras, cars, tools..."
+                value="<%= search || '' %>"
+            >
+
+            <select name="category">
+                <option value="">All Categories</option>
+
+                <% categories.forEach(category => { %>
+                    <option
+                        value="<%= category.id %>"
+                        <%= String(category.id) === String(categoryValue || "") ? "selected" : "" %>
+                    >
+                        <%= category.name %>
+                    </option>
+                <% }) %>
+            </select>
+
+            <button type="submit" class="btn btn-primary">
+                Search
+            </button>
+        </form>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">DISCOVER</span>
+            <h2>Available for rent</h2>
+        </div>
+
+        <% if (user && ["OWNER", "ADMIN"].includes(user.role)) { %>
+            <a href="/items/add" class="btn btn-outline">
+                List an Item
+            </a>
+        <% } else if (!user) { %>
+            <a href="/register" class="btn btn-outline">
+                Become an Owner
+            </a>
+        <% } %>
+    </div>
+
+    <div class="item-grid">
+        <% if (!items || items.length === 0) { %>
+            <div class="empty-state">
+                <h3>No items found</h3>
+                <p>Try a different search or category.</p>
+            </div>
+        <% } %>
+
+        <% (items || []).forEach(item => { %>
+            <article class="item-card">
+
+                <a href="/items/<%= item.id %>">
+                    <div class="item-image">
+                        <% if (item.image) { %>
+                            <img
+                                src="/uploads/<%= item.image %>"
+                                alt="<%= item.title %>"
+                                loading="lazy"
+                            >
+                        <% } else { %>
+                            <div class="image-placeholder">
+                                No image
+                            </div>
+                        <% } %>
+                    </div>
+                </a>
+
+                <div class="item-content">
+
+                    <span class="category">
+                        <%= item.category_name %>
+                    </span>
+
+                    <h3>
+                        <a href="/items/<%= item.id %>">
+                            <%= item.title %>
+                        </a>
+                    </h3>
+
+                    <p class="location">
+                        <%= item.location %>
+                    </p>
+
+                    <div class="item-meta">
+                        <strong>
+                            Rs.
+                            <%= Number(item.price_per_day).toLocaleString("en-PK") %>
+                            <small>/ day</small>
+                        </strong>
+
+                        <span class="rating">
+                            ★
+                            <%= Number(item.average_rating || 0).toFixed(1) %>
+                            (<%= item.review_count || 0 %>)
+                        </span>
+                    </div>
+
+                    <p class="owner-name">
+                        Listed by <%= item.owner_name %>
+                    </p>
+
+                    <a
+                        href="/items/<%= item.id %>"
+                        class="btn btn-primary full-width"
+                    >
+                        View Details
+                    </a>
+
+                </div>
+            </article>
+        <% }) %>
+    </div>
+</section>
+
+<%- include("../partials/footer") %>

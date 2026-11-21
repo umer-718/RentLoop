@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title><%= typeof pageTitle !== "undefined" ? pageTitle + " | RentLoop" : "RentLoop" %></title>
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header class="navbar">
+    <a href="/" class="logo">Rent<span>Loop</span></a>
+
+    <nav>
+        <a href="/">Explore</a>
+
+        <% if (user) { %>
+            <a href="/dashboard">Dashboard</a>
+
+            <% if (user.role === "OWNER" || user.role === "ADMIN") { %>
+                <a href="/my-items">My Listings</a>
+                <a href="/owner-bookings">Requests</a>
+            <% } %>
+
+            <a href="/my-bookings">My Bookings</a>
+
+            <% if (user.role === "ADMIN") { %>
+                <a href="/admin">Admin</a>
+            <% } %>
+
+            <form action="/logout" method="POST" class="nav-form">
+                <button class="nav-logout">Logout</button>
+            </form>
+        <% } else { %>
+            <a href="/login">Login</a>
+            <a href="/register" class="nav-register">Get Started</a>
+        <% } %>
+    </nav>
+</header>
+
+<main class="container">

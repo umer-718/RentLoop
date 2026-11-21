@@ -1,0 +1,104 @@
+<%- include("../partials/header", { pageTitle: pageTitle }) %>
+
+<section class="dashboard-header">
+    <h1><%= pageTitle %></h1>
+    <p>Review the status and details of your rental activity.</p>
+</section>
+
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th><%= pageTitle === "My Bookings" ? "Owner" : "Customer" %></th>
+                <th>Rental Dates</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <% if (bookings.length === 0) { %>
+                <tr>
+                    <td colspan="6">No bookings found.</td>
+                </tr>
+            <% } %>
+
+            <% bookings.forEach(booking => { %>
+                <tr>
+                    <td>
+                        <a href="/items/<%= booking.item_id %>">
+                            <%= booking.item_title %>
+                        </a>
+                    </td>
+
+                    <td>
+                        <%= pageTitle === "My Bookings"
+                            ? booking.owner_name
+                            : booking.customer_name %>
+                    </td>
+
+                    <td>
+                        <%= new Date(booking.start_date).toLocaleDateString() %>
+                        –
+                        <%= new Date(booking.end_date).toLocaleDateString() %>
+                    </td>
+
+                    <td>Rs. <%= Number(booking.total_amount).toLocaleString() %></td>
+
+                    <td><span class="status"><%= booking.status %></span></td>
+
+                    <td class="actions">
+                        <% if (pageTitle === "My Bookings" && booking.status === "PENDING") { %>
+                            <form
+                                action="/bookings/<%= booking.id %>/cancel"
+                                method="POST"
+                                class="inline-form"
+                            >
+                                <button class="text-danger">Cancel</button>
+                            </form>
+                        <% } %>
+
+                        <% if (pageTitle === "Rental Requests" && booking.status === "PENDING") { %>
+                            <form action="/bookings/<%= booking.id %>/update" method="POST" class="inline-form">
+                                <input type="hidden" name="action" value="APPROVED">
+                                <button class="text-success">Approve</button>
+                            </form>
+
+                            <form action="/bookings/<%= booking.id %>/update" method="POST" class="inline-form">
+                                <input type="hidden" name="action" value="REJECTED">
+                                <button class="text-danger">Reject</button>
+                            </form>
+                        <% } %>
+
+                        <% if (pageTitle === "Rental Requests" && booking.status === "APPROVED") { %>
+                            <form action="/bookings/<%= booking.id %>/update" method="POST" class="inline-form">
+                                <input type="hidden" name="action" value="COMPLETED">
+                                <button class="text-success">Complete</button>
+                            </form>
+                        <% } %>
+
+                        <% if (pageTitle === "My Bookings" && booking.status === "COMPLETED") { %>
+                            <form action="/bookings/<%= booking.id %>/review" method="POST" class="review-form">
+                                <select name="rating" required>
+                                    <option value="">Rating</option>
+                                    <option value="5">5 - Excellent</option>
+                                    <option value="4">4 - Good</option>
+                                    <option value="3">3 - Average</option>
+                                    <option value="2">2 - Poor</option>
+                                    <option value="1">1 - Bad</option>
+                                </select>
+
+                                <input type="text" name="comment" placeholder="Your review">
+                                <button class="text-success">Review</button>
+                            </form>
+                        <% } %>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
+
+<%- include("../partials/footer") %>

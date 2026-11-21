@@ -1,0 +1,75 @@
+<%- include("../partials/header", { pageTitle: "Dashboard" }) %>
+
+<section class="dashboard-header">
+    <span class="eyebrow">YOUR RENTLOOP ACCOUNT</span>
+    <h1>Welcome, <%= user.name %>!</h1>
+    <p>Manage your rentals, listings and account activity.</p>
+</section>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <span>My Listings</span>
+        <strong><%= stats.my_items %></strong>
+    </div>
+
+    <div class="stat-card">
+        <span>My Bookings</span>
+        <strong><%= stats.my_bookings %></strong>
+    </div>
+
+    <div class="stat-card">
+        <span>Pending Requests</span>
+        <strong><%= stats.pending_requests %></strong>
+    </div>
+
+    <div class="stat-card">
+        <span>Owner Earnings</span>
+        <strong>Rs. <%= Number(stats.earnings).toLocaleString() %></strong>
+    </div>
+</div>
+
+<section class="section">
+    <div class="section-heading">
+        <h2>Quick Actions</h2>
+    </div>
+
+    <div class="quick-links">
+        <a href="/">Explore Marketplace</a>
+        <a href="/my-bookings">My Bookings</a>
+
+        <% if (user.role === "OWNER" || user.role === "ADMIN") { %>
+            <a href="/items/add">Add New Listing</a>
+            <a href="/my-items">Manage Listings</a>
+            <a href="/owner-bookings">Rental Requests</a>
+        <% } %>
+
+        <% if (user.role === "ADMIN") { %>
+            <a href="/admin">Admin Dashboard</a>
+        <% } %>
+    </div>
+</section>
+
+<section class="section">
+    <h2>Recent Notifications</h2>
+
+    <% if (notifications.length === 0) { %>
+        <p>No notifications yet.</p>
+    <% } %>
+
+    <% notifications.forEach(notification => { %>
+        <div class="notification <%= notification.is_read ? '' : 'unread' %>">
+            <div>
+                <p><%= notification.message %></p>
+                <small><%= new Date(notification.created_at).toLocaleString() %></small>
+            </div>
+
+            <% if (!notification.is_read) { %>
+                <form action="/notifications/<%= notification.id %>/read" method="POST">
+                    <button class="btn btn-small btn-outline">Mark Read</button>
+                </form>
+            <% } %>
+        </div>
+    <% }) %>
+</section>
+
+<%- include("../partials/footer") %>

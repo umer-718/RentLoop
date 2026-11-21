@@ -1,0 +1,117 @@
+<%- include("../partials/header", { pageTitle: "Admin Dashboard" }) %>
+
+<section class="dashboard-header">
+    <span class="eyebrow">PLATFORM MANAGEMENT</span>
+    <h1>Admin Dashboard</h1>
+    <p>Monitor users, listings, bookings and platform revenue.</p>
+</section>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <span>Total Users</span>
+        <strong><%= stats.total_users %></strong>
+    </div>
+
+    <div class="stat-card">
+        <span>Total Listings</span>
+        <strong><%= stats.total_items %></strong>
+    </div>
+
+    <div class="stat-card">
+        <span>Total Bookings</span>
+        <strong><%= stats.total_bookings %></strong>
+    </div>
+
+    <div class="stat-card">
+        <span>Pending Bookings</span>
+        <strong><%= stats.pending_bookings %></strong>
+    </div>
+
+    <div class="stat-card">
+        <span>Recorded Payments</span>
+        <strong>Rs. <%= Number(stats.total_revenue).toLocaleString() %></strong>
+    </div>
+</div>
+
+<section class="section">
+    <h2>Recent Users</h2>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <% users.forEach(person => { %>
+                    <tr>
+                        <td><%= person.name %></td>
+                        <td><%= person.email %></td>
+                        <td><%= person.role %></td>
+                        <td><%= person.status %></td>
+                        <td>
+                            <% if (person.role !== "ADMIN") { %>
+                                <form action="/admin/users/<%= person.id %>/status" method="POST">
+                                    <input
+                                        type="hidden"
+                                        name="status"
+                                        value="<%= person.status === 'ACTIVE' ? 'BLOCKED' : 'ACTIVE' %>"
+                                    >
+
+                                    <button class="btn btn-small btn-outline">
+                                        <%= person.status === "ACTIVE" ? "Block" : "Activate" %>
+                                    </button>
+                                </form>
+                            <% } %>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="section">
+    <h2>Recent Listings</h2>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Owner</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <% items.forEach(item => { %>
+                    <tr>
+                        <td><%= item.title %></td>
+                        <td><%= item.owner_name %></td>
+                        <td><%= item.status %></td>
+                        <td>
+                            <form action="/admin/items/<%= item.id %>/status" method="POST">
+                                <select name="status">
+                                    <option value="AVAILABLE">Available</option>
+                                    <option value="UNAVAILABLE">Unavailable</option>
+                                    <option value="BLOCKED">Blocked</option>
+                                </select>
+                                <button class="btn btn-small btn-outline">Update</button>
+                            </form>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<%- include("../partials/footer") %>

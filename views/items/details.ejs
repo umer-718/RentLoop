@@ -1,0 +1,72 @@
+<%- include("../partials/header", { pageTitle: item.title }) %>
+
+<section class="details-layout">
+    <div class="details-image">
+        <% if (item.image) { %>
+            <img src="/uploads/<%= item.image %>" alt="<%= item.title %>">
+        <% } else { %>
+            <div class="image-placeholder">No image available</div>
+        <% } %>
+    </div>
+
+    <div class="details-content">
+        <span class="category"><%= item.category_name %></span>
+        <h1><%= item.title %></h1>
+
+        <p class="location"><%= item.location %></p>
+
+        <h2 class="price">
+            Rs. <%= Number(item.price_per_day).toLocaleString() %>
+            <small>/ day</small>
+        </h2>
+
+        <p><%= item.description %></p>
+
+        <div class="detail-info">
+            <p><strong>Owner:</strong> <%= item.owner_name %></p>
+            <p><strong>Rating:</strong> ★ <%= Number(item.average_rating).toFixed(1) %>
+                (<%= item.review_count %> reviews)
+            </p>
+            <p><strong>Security deposit:</strong>
+                Rs. <%= Number(item.security_deposit).toLocaleString() %>
+            </p>
+        </div>
+
+        <% if (user && user.id !== item.owner_id && user.role === "CUSTOMER") { %>
+            <form action="/items/<%= item.id %>/book" method="POST" class="booking-form">
+                <h3>Book this item</h3>
+
+                <label>Start Date</label>
+                <input type="date" name="start_date" min="<%= new Date().toISOString().slice(0, 10) %>" required>
+
+                <label>End Date</label>
+                <input type="date" name="end_date" min="<%= new Date().toISOString().slice(0, 10) %>" required>
+
+                <button class="btn btn-primary full-width">Request Booking</button>
+            </form>
+        <% } else if (!user) { %>
+            <a href="/login" class="btn btn-primary">Login to Book</a>
+        <% } else if (user.id === item.owner_id) { %>
+            <p class="notice">This is your own listing.</p>
+        <% } %>
+    </div>
+</section>
+
+<section class="section">
+    <h2>Customer Reviews</h2>
+
+    <% if (reviews.length === 0) { %>
+        <p>No reviews yet.</p>
+    <% } %>
+
+    <% reviews.forEach(review => { %>
+        <article class="review-card">
+            <strong><%= review.customer_name %></strong>
+            <span class="rating"><%= "★".repeat(review.rating) %></span>
+            <p><%= review.comment %></p>
+            <small><%= new Date(review.created_at).toLocaleDateString() %></small>
+        </article>
+    <% }) %>
+</section>
+
+<%- include("../partials/footer") %>

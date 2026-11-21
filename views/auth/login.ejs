@@ -1,0 +1,28 @@
+<%- include("../partials/header", { pageTitle: "Login" }) %>
+
+<section class="auth-section">
+    <div class="auth-card">
+        <h1>Welcome back</h1>
+        <p>Login to your RentLoop account.</p>
+
+        <% if (error) { %>
+            <div class="alert"><%= error %></div>
+        <% } %>
+
+        <form action="/login" method="POST">
+            <label>Email Address</label>
+            <input type="email" name="email" required>
+
+            <label>Password</label>
+            <input type="password" name="password" required>
+
+            <button class="btn btn-primary full-width">Login</button>
+        </form>
+
+        <p class="auth-switch">
+            Don't have an account? <a href="/register">Register</a>
+        </p>
+    </div>
+</section>
+
+<%- include("../partials/footer") %>
